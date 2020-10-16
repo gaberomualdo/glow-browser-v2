@@ -1,30 +1,76 @@
 const allTabsElm = document.querySelector('.app-container .meta .tabs-container ul.all-tabs');
+const webviewsElm = document.querySelector('.app-container .webviews');
+const queryInputElm = document.querySelector('#url-or-search-query');
+
+const backBtnElm = document.querySelector('.app-container .meta .topbar > .misc-buttons button.back');
+const forwardBtnElm = document.querySelector('.app-container .meta .topbar > .misc-buttons button.forward');
+const refreshBtnElm = document.querySelector('.app-container .meta .topbar > .misc-buttons button.refresh');
+
+const newTabURL = 'https://www.google.com/';
+
 let allTabs = [];
+
+let removingATab = false;
+
+const updateQueryInputForTabURL = (idx) => {
+  const newValue = allTabs[idx].url === newTabURL ? '' : allTabs[idx].url;
+  if (newValue !== queryInputElm.value) {
+    queryInputElm.value = newValue;
+  }
+};
 
 const getTabElm = (idx) => {
   return document.querySelector(`.app-container .meta .tabs-container ul.all-tabs li:nth-child(${idx + 1})`);
 };
+const getWebviewElm = (idx) => {
+  return document.querySelector(`.app-container .webviews webview:nth-child(${idx + 1})`);
+};
+
+const getIdxFromWebviewElm = (webview) => {
+  return Array.from(document.querySelectorAll('.app-container .webviews webview')).indexOf(webview);
+};
+
+const getActiveTabIdx = () => {
+  let currentTabIdx = -1;
+  allTabs.forEach((e, i) => {
+    if (e.active) {
+      currentTabIdx = i;
+    }
+  });
+  return currentTabIdx;
+};
 
 const setTabActiveStatus = (idx, newActiveStatus) => {
   if (newActiveStatus === true) {
-    allTabs.forEach((e, i) => {
-      if (e.active) {
-        setTabActiveStatus(i, false);
+    const activeTabIdx = getActiveTabIdx();
+
+    if (idx !== activeTabIdx) {
+      if (activeTabIdx > -1) {
+        setTabActiveStatus(activeTabIdx, false);
       }
-    });
+      updateQueryInputForTabURL(idx);
+      updateForwardBackwardBtnsDisabled();
+    }
   }
   const status = newActiveStatus ? true : false;
   allTabs[idx].active = status;
   getTabElm(idx).setAttribute('active', status.toString());
+  getWebviewElm(idx).setAttribute('active', status.toString());
 };
 
 const removeTab = (tabIdx) => {
+  if (removingATab) return;
+
   const tabElm = getTabElm(tabIdx);
+  const webviewElm = getWebviewElm(tabIdx);
   tabElm.classList.add('removing');
+  removingATab = true;
   setTimeout(() => {
     allTabs.splice(tabIdx, 1);
     allTabsElm.removeChild(tabElm);
+    webviewsElm.removeChild(webviewElm);
     setTabActiveStatus(allTabs.length - 1, true);
+    removingATab = false;
   }, 300);
 };
 
@@ -97,32 +143,139 @@ const addTab = (url) => {
     </div>
     <img class="favicon-image" src="assets/img/icon.png"></img>
   </div>
-  <p>${url === 'homepage.html' ? 'New Tab' : 'Loading...'}</p>
+  <p>${url === newTabURL ? 'New Tab' : 'Loading...'}</p>
   <button onclick="removeTabFromTabElm(this.parentElement)" class="delete-tab btn-floating grey-icon btn-flat btn-large waves-effect btn-small">
     <i class="material-icons">close</i>
   </button>`;
   allTabsElm.appendChild(newTabElm);
 
+  const newTabWebview = document.createElement('webview');
+  newTabWebview.setAttribute('src', url);
+
+  // webview events
+  newTabWebview.addEventListener('page-title-updated', (e) => {
+    getTabElm(getIdxFromWebviewElm(e.target)).querySelector('p').innerText = e.title;
+  });
+  newTabWebview.addEventListener('did-start-loading', (e) => {
+    getTabElm(getIdxFromWebviewElm(e.target)).querySelector('.favicon').classList.remove('loaded');
+  });
+  newTabWebview.addEventListener('did-stop-loading', (e) => {
+    const tabIdx = getIdxFromWebviewElm(e.target);
+    const webview = getWebviewElm(tabIdx);
+    const tabElm = getTabElm(tabIdx);
+    updateForwardBackwardBtnsDisabled();
+
+    const currentURL = webview.src;
+
+    tabElm.querySelector('.favicon img').src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(currentURL.split('?')[0])}`;
+    tabElm.querySelector('.favicon').classList.add('loaded');
+
+    allTabs[tabIdx].url = currentURL;
+
+    updateQueryInputForTabURL(tabIdx);
+  });
+  newTabWebview.addEventListener('new-window', (e) => {
+    addTab(e.url);
+  });
+
+  webviewsElm.appendChild(newTabWebview);
+
+  newTabWebview.focus();
+
   setTabActiveStatus(allTabs.length - 1, true);
+
+  if (url === newTabURL) {
+    queryInputElm.focus();
+  }
 };
 
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
-addTab('homepage.html');
+const updateForwardBackwardBtnsDisabled = () => {
+  const webview = getWebviewElm(getActiveTabIdx());
+  if (webview) {
+    if (!webview.canGoForward()) {
+      forwardBtnElm.setAttribute('disabled', 'true');
+    } else {
+      forwardBtnElm.removeAttribute('disabled');
+    }
+    if (!webview.canGoBack()) {
+      backBtnElm.setAttribute('disabled', 'true');
+    } else {
+      backBtnElm.removeAttribute('disabled');
+    }
+  }
+};
+
+window.addEventListener('load', () => {
+  queryInputElm.addEventListener('keydown', (e) => {
+    const searchEngines = [
+      '@twitter',
+      '@google',
+      '@bing',
+      '@github',
+      '@yahoo',
+      '@wikipedia',
+      '@duckduckgo',
+      '@wikihow',
+      '@amazon',
+      '@steam',
+      '@guardian',
+      '@nytimes',
+      '@cnn',
+    ];
+    const searchEngineStart = [
+      'http://twitter.com/search?q=',
+      'http://google.com/search?q=',
+      'http://www.bing.com/search?q=',
+      'http://github.com/search?q=',
+      'http://search.yahoo.com/search?q=',
+      'http://en.wikipedia.org/w/index.php?search=',
+      'http://duckduckgo.com/?q=',
+      'https://www.wikihow.com/wikiHowTo?search=',
+      'https://www.amazon.com/s/?field-keywords=',
+      'http://store.steampowered.com/search/?term=',
+      'https://www.google.co.uk/search?as_sitesearch=www.theguardian.com&q=',
+      'https://www.nytimes.com/search/',
+      'https://edition.cnn.com/search/?q=',
+    ];
+
+    if (e.key === 'Enter') {
+      let url = queryInputElm.value;
+      queryInputElm.blur();
+
+      if (url.indexOf(' ') != -1 || url.indexOf('.') == -1) {
+        const searchEngine = searchEngines.indexOf(url.split(' ')[0]);
+        if (searchEngine != -1) {
+          url = url.split(' ');
+          url[0] = '';
+          url = url.join(' ');
+          url = url.substring(1);
+          url = searchEngineStart[searchEngine] + url;
+        } else {
+          url = 'https://google.com/search?q=' + url;
+        }
+      }
+      if (!url.startsWith('http://') && !url.startsWith('file://') && !url.startsWith('https://')) {
+        url = 'http://' + url;
+      }
+
+      const webview = getWebviewElm(getActiveTabIdx());
+      webview.loadURL(url);
+      webview.focus();
+    }
+  });
+
+  backBtnElm.addEventListener('click', () => {
+    getWebviewElm(getActiveTabIdx()).goBack();
+  });
+  forwardBtnElm.addEventListener('click', () => {
+    getWebviewElm(getActiveTabIdx()).goForward();
+  });
+  refreshBtnElm.addEventListener('click', () => {
+    getWebviewElm(getActiveTabIdx()).reload();
+  });
+});
+
+addTab(newTabURL);
 
 // $(function () {
 //   updateEvents();
@@ -160,7 +313,7 @@ addTab('homepage.html');
 //     $('#topbar input:eq(' + (allTabs.length - 2) + ')')
 //   );
 
-//   if (url == 'homepage.html') {
+//   if (url == newTabURL) {
 //     $('#topbar input.activeInput').focus();
 //   }
 
@@ -291,13 +444,13 @@ addTab('homepage.html');
 //     $(this).blur();
 //     var index = $('#web webview').index($(this));
 //     if (!$('#topbar input:eq(' + index + ')').is(':focus')) {
-//       if ($(this).attr('src').endsWith('homepage.html')) {
+//       if ($(this).attr('src').endsWith(newTabURL)) {
 //         $('#topbar input:eq(' + index + ')').val('');
 //       } else {
 //         $('#topbar input:eq(' + index + ')').val($(this).attr('src'));
 //       }
 //     }
-//     if ($(this).attr('src').endsWith('homepage.html')) {
+//     if ($(this).attr('src').endsWith(newTabURL)) {
 //       $('#tabs div img:eq(' + index + ')').attr('src', 'assets/img/icon_no_border.png');
 //     } else {
 //       $('#tabs div img:eq(' + index + ')').attr('src', 'https://www.google.com/s2/favicons?domain=' + $(this).attr('src').split('?')[0]);
@@ -316,7 +469,7 @@ addTab('homepage.html');
 // }
 
 // $('#tabs button.addTab').on('click', function () {
-//   addTab('homepage.html');
+//   addTab(newTabURL);
 // });
 
 // $('#topbar button.back').on('click', function () {

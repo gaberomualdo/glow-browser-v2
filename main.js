@@ -21,7 +21,7 @@ function createWindow() {
     height: 800,
     minWidth: 700,
     minHeight: 700,
-    webPreferences: { webSecurity: false, nodeIntegration: true },
+    webPreferences: { webSecurity: false, nodeIntegration: true, worldSafeExecuteJavaScript: true, contextIsolation: false, webviewTag: true },
   });
 
   // Remove Menu Bar

@@ -11,7 +11,7 @@
       <div class="meta">
         <div class="tabs-container">
           <ul class="all-tabs"></ul>
-          <button onclick="addTab('homepage.html')" class="add-tab btn-floating grey-icon btn-flat btn-large waves-effect btn-small">
+          <button onclick="addTab(newTabURL);this.blur();" class="add-tab btn-floating grey-icon btn-flat btn-large waves-effect btn-small">
             <i class="material-icons">add</i>
           </button>
         </div>
@@ -27,7 +27,15 @@
               <i class="material-icons">refresh</i>
             </button>
           </div>
-          <input id="url-or-search-query" class="query-input" placeholder="Type URL or Search..." type="text" spellcheck="false" autofocus />
+          <input
+            id="url-or-search-query"
+            onfocus="this.select()"
+            class="query-input"
+            placeholder="Type URL or Search..."
+            type="text"
+            spellcheck="false"
+            autofocus
+          />
         </div>
       </div>
       <div class="webviews"></div>
