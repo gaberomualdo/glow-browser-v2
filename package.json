@@ -1,0 +1,19 @@
+{
+  "name": "lilac",
+  "productName": "Lilac",
+  "version": "1.0.0",
+  "description": "The web browser of the future.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Gabriel Romualdo",
+  "license": "MIT License",
+  "pack:osx": "electron-packager Lilac --out=dist/ --platform=darwin --arch=x64 --icon=assets/img/icon.icns",
+  "build": "npm run pack:osx",
+  "devDependencies": {},
+  "dependencies": {
+    "electron": "^10.1.3",
+    "materialize-css": "^1.0.0-rc.2"
+  }
+}
