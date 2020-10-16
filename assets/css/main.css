@@ -60,13 +60,14 @@ body {
   width: 100%;
   height: 100vh;
 }
-.app-container > .meta {
-  padding: 0.5rem;
+.app-container .meta {
   border-bottom: 1px solid #dedede;
+  user-select: none;
 }
 .app-container .meta .topbar {
   display: flex;
   flex-direction: row;
+  padding: 0.5rem;
 }
 
 .app-container .meta .topbar > * {
@@ -116,4 +117,139 @@ body {
 }
 .app-container .meta .topbar > .query-input .input-field {
   width: 100%;
+}
+
+.app-container .meta .tabs-container {
+  display: flex;
+  height: 2.75rem;
+  align-items: center;
+  background-color: #dde3e6;
+  width: 100%;
+  padding: 0 1rem;
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+.app-container .meta .tabs-container button.add-tab {
+  background-color: #bfcad0 !important;
+  width: 2rem;
+  height: 2rem;
+}
+.app-container .meta .tabs-container button.add-tab:not(:hover) {
+  background-color: transparent !important;
+}
+.app-container .meta .tabs-container button.add-tab i {
+  font-size: 1.4rem;
+  color: #111;
+  line-height: 2rem;
+}
+.app-container .meta .tabs-container ul.all-tabs {
+  box-sizing: border-box;
+  flex-basis: auto;
+  height: 100%;
+  display: flex;
+  background: transparent;
+  position: relative;
+  margin-right: 0.5rem;
+  max-width: calc(100% - 2rem - 0.5rem);
+}
+.app-container .meta .tabs-container ul.all-tabs li {
+  flex-basis: 20rem;
+  width: 20rem;
+  flex-shrink: 1;
+  display: flex;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+  align-items: center;
+  transition: width 0.2s, flex-basis 0.2s, background-color 0.2s, border-color 0.2s;
+  background-color: transparent;
+  animation: enter-in 0.3s ease-in-out;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+  max-width: 0;
+  overflow-x: hidden;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+}
+@keyframes enter-in {
+  0% {
+    max-width: 0;
+    padding: 0.5rem 0;
+  }
+  100% {
+    max-width: 20rem;
+    padding: 0.5rem;
+  }
+}
+.app-container .meta .tabs-container ul.all-tabs li.removing {
+  animation: leave 0.3s ease-in-out;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+@keyframes leave {
+  0% {
+    max-width: 20rem;
+    padding: 0.5rem;
+  }
+  100% {
+    max-width: 0rem;
+    padding: 0rem;
+  }
+}
+.app-container .meta .tabs-container ul.all-tabs li[active='true'] {
+  background-color: #fff;
+}
+
+.app-container .meta .tabs-container ul.all-tabs li {
+  border-left-color: #bfcad0;
+}
+.app-container .meta .tabs-container ul.all-tabs li:last-child:not([active='true']) {
+  border-right-color: #bfcad0;
+}
+.app-container .meta .tabs-container ul.all-tabs li[active='true'],
+.app-container .meta .tabs-container ul.all-tabs li[active='true'] + li {
+  border-left-color: transparent;
+}
+.app-container .meta .tabs-container ul.all-tabs li .favicon {
+  flex-shrink: 0;
+  flex-basis: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  position: relative;
+  margin: 0 0.25rem;
+  margin-right: 0.75rem;
+  object-fit: cover;
+}
+.app-container .meta .tabs-container ul.all-tabs li .favicon.loaded .preloader-wrapper,
+.app-container .meta .tabs-container ul.all-tabs li .favicon:not(.loaded) img {
+  display: none;
+}
+.app-container .meta .tabs-container ul.all-tabs li .favicon .preloader-wrapper,
+.app-container .meta .tabs-container ul.all-tabs li .favicon img {
+  width: 100%;
+  height: 100%;
+}
+.app-container .meta .tabs-container ul.all-tabs li .favicon .preloader-wrapper .circle {
+  border-width: 2px;
+}
+.app-container .meta .tabs-container ul.all-tabs li p {
+  flex-basis: 100%;
+  flex-shrink: 1;
+  overflow-x: hidden;
+  white-space: nowrap;
+  margin-right: 0.25rem;
+  font-size: 0.9rem;
+}
+.app-container .meta .tabs-container ul.all-tabs li button.delete-tab {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.app-container .meta .tabs-container ul.all-tabs li button.delete-tab i {
+  font-size: 0.95rem;
+  line-height: 1.75rem;
+  display: block;
+  float: left;
+}
+.app-container .meta .tabs-container ul.all-tabs li button.delete-tab:not(:hover) {
+  background-color: transparent !important;
 }

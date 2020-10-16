@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Lilac</title>
+    <title>Lilac 🌸</title>
     <link rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css" />
     <link rel="stylesheet" href="assets/css/main.css" />
   </head>
@@ -10,68 +10,8 @@
     <div class="app-container">
       <div class="meta">
         <div class="tabs-container">
-          <ul class="tabs">
-            <li class="activeTab">
-              <div class="preloader-wrapper small active">
-                <div class="spinner-layer spinner-blue">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-
-                <div class="spinner-layer spinner-red">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-
-                <div class="spinner-layer spinner-yellow">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-
-                <div class="spinner-layer spinner-green">
-                  <div class="circle-clipper left">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="gap-patch">
-                    <div class="circle"></div>
-                  </div>
-                  <div class="circle-clipper right">
-                    <div class="circle"></div>
-                  </div>
-                </div>
-              </div>
-              <h1>New Tab</h1>
-              <span
-                ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path
-                    d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
-                  />
-                </svg>
-              </span>
-            </li>
-          </ul>
-          <button class="add-tab btn-floating grey-icon btn-flat btn-large waves-effect grey lighten-3 btn-small">
+          <ul class="all-tabs"></ul>
+          <button onclick="addTab('homepage.html')" class="add-tab btn-floating grey-icon btn-flat btn-large waves-effect btn-small">
             <i class="material-icons">add</i>
           </button>
         </div>
